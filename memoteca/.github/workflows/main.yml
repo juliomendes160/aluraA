@@ -32,7 +32,7 @@ jobs:
           git config --global user.email "juliomendes160@hotmail.com"
           git config --global user.name "Julio Mendes"
           git checkout -B docs
-          mv dist/tinus-informatica docs
+          mv dist/* docs
           git add .
           git commit --amend --no-edit
           git push --force origin docs
