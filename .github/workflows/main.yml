@@ -1,0 +1,45 @@
+name: Build and Deploy to gh-pages
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set Up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 18
+
+      - name: Install Angular CLI
+        run: npm install -g @angular/cli
+
+      - name: Install Dependencies
+        run: |
+          cd "$(find * -type f -exec dirname {} \; -quit)"
+          npm install
+
+      - name: Build Production Files
+        run: |
+          cd "$(find * -type f -exec dirname {} \; -quit)"
+          ng build
+
+      - name: Deploy to Docs Branch
+        run: |
+          git config --global user.email "juliomendes160@hotmail.com"
+          git config --global user.name "Julio Mendes"
+          git checkout -B docs
+          dirname=$(find * -type f -exec dirname {} \; -quit)
+          basename=$(basename "$dirname")
+          mv "$(find * -type d -name "$basename" |  sed -n "2p")" .
+          mv "$basename" docs
+          git add .
+          git commit --amend --no-edit
+          git push --force origin docs
